@@ -12,7 +12,7 @@
 
 1. [核心开源项目](#一核心开源项目)
 2. [重要学术论文](#二重要学术论文)
-3. [基准数据集与评测框架](#三基准数据集与评测框架)
+3. [开发测试数据集与评测框架](#三开发测试数据集与评测框架) ⭐ **新增详细内容**
 4. [Agent开发框架](#四agent开发框架)
 5. [资源合集与学习资料](#五资源合集与学习资料)
 6. [技术趋势分析](#六技术趋势分析)
@@ -247,9 +247,115 @@
 
 ---
 
-## 三、基准数据集与评测框架
+## 三、开发测试数据集与评测框架
 
-### 3.1 RCAEval ⭐⭐⭐⭐⭐
+> 🎯 **本节重点**: 提供可直接用于开发和测试AIOps程序的数据集和环境
+
+### 3.1 推荐开发测试数据集（按类型分类）
+
+#### 📊 日志异常检测数据集
+
+| 数据集 | 规模 | 特点 | 下载链接 |
+|--------|------|------|----------|
+| **HDFS** | 11M+ 日志行 | Hadoop分布式文件系统日志，标注异常 | https://github.com/logpai/loghub |
+| **BGL** | 4.7M 日志行 | Blue Gene/L超级计算机日志 | https://github.com/logpai/loghub |
+| **Thunderbird** | 211M 日志行 | 超级计算机系统日志 | https://github.com/logpai/loghub |
+| **OpenStack** | 207K 日志行 | 云平台日志，多种异常类型 | https://github.com/logpai/loghub |
+| **Hadoop** | 394K 日志行 | 大数据平台日志 | https://github.com/logpai/loghub |
+
+**综合资源**: https://github.com/ait-aecid/anomaly-detection-log-datasets
+
+---
+
+#### 📈 多模态数据集（日志+指标+追踪）
+
+| 数据集 | 数据类型 | 规模 | 下载链接 |
+|--------|----------|------|----------|
+| **LO2 Microservice** | 日志+指标+追踪 | 657K日志文件, 45M指标文件 | https://arxiv.org/pdf/2504.12067 |
+| **MultiLog** | 多变量日志 | 分布式数据库集群 | https://github.com/AIOps-LogDB/MultiLog-Dataset |
+| **RCAEval** | 日志+指标+追踪 | 735个故障案例 | https://zenodo.org/records/14504481 |
+| **Train-Ticket** | 全栈数据 | 微服务系统 | https://github.com/FudanSELab/train-ticket |
+
+---
+
+#### 🔧 可生成测试数据的微服务系统
+
+| 系统 | 服务数量 | 特点 | GitHub |
+|------|----------|------|--------|
+| **Online Boutique** | 11个微服务 | Google官方示例，易部署 | https://github.com/GoogleCloudPlatform/microservices-demo |
+| **Sock Shop** | 13个微服务 | Weaveworks示例，社区活跃 | https://github.com/microservices-demo/microservices-demo |
+| **Train-Ticket** | 41个微服务 | 复旦大学，功能完整 | https://github.com/FudanSELab/train-ticket |
+| **DeathStarBench** | 28个微服务 | 学术标准，论文常用 | https://github.com/delimitrou/DeathStarBench |
+
+---
+
+### 3.2 故障注入与测试环境
+
+#### Chaos Mesh（推荐）⭐⭐⭐⭐⭐
+
+**简介**: Kubernetes原生的混沌工程平台，可注入多种故障
+
+**支持的故障类型**:
+- Pod故障（杀死、重启）
+- 网络故障（延迟、丢包、分区）
+- IO故障（延迟、错误）
+- CPU/内存压力
+- HTTP故障
+- DNS故障
+
+**快速安装**:
+```bash
+# 安装Chaos Mesh
+curl -sSL https://mirrors.chaos-mesh.org/v2.8.0/install.sh | bash
+```
+
+**资源链接**:
+- 官网: https://chaos-mesh.org
+- GitHub: https://github.com/chaos-mesh/chaos-mesh
+- 文档: https://chaos-mesh.org/docs/
+
+---
+
+#### ChaosStarBench ⭐⭐⭐⭐
+
+**简介**: 基于DeathStarBench的故障实验基准套件
+
+**特点**:
+- 预配置的故障场景
+- 集成Chaos Mesh
+- 支持多种微服务应用
+
+**资源链接**:
+- GitHub: https://github.com/gwinch97/ChaosStarBench
+
+---
+
+#### AIOpsArena ⭐⭐⭐⭐⭐
+
+**简介**: 场景导向的AIOps评估平台
+
+**核心功能**:
+- 自动数据采集（日志、追踪、指标）
+- 可定制故障注入
+- 在线算法部署
+- 算法排行榜对比
+
+**快速开始**:
+```bash
+# 克隆仓库
+git clone https://github.com/AIOpsArena/aiopsarena
+# 按文档部署到Kubernetes
+```
+
+**资源链接**:
+- GitHub: https://github.com/AIOpsArena/aiopsarena
+- 论文: https://nkcs.iops.ai/wp-content/uploads/2025/01/AIOpsArena.pdf
+
+---
+
+### 3.3 RCA专用基准测试
+
+#### RCAEval ⭐⭐⭐⭐⭐
 
 **简介**: ASE 2024/WWW 2025发布的开源RCA基准测试
 
@@ -259,54 +365,74 @@
 - 3个微服务系统：Online Boutique、Sock Shop、Train Ticket
 - 11种故障类型
 
+**使用方式**:
+```bash
+# 安装
+pip install RCAEval
+# 运行基准测试
+python -m RCAEval --config your_config.yaml
+```
+
 **资源链接**:
 - GitHub: https://github.com/phamquiluan/RCAEval
 - 论文: https://arxiv.org/html/2412.17015v5
-- 数据: https://zenodo.org/records/14504481
+- 数据下载: https://zenodo.org/records/14504481
 
 ---
 
-### 3.2 NetManAIOps 数据集 ⭐⭐⭐⭐⭐
+#### NetManAIOps 数据集 ⭐⭐⭐⭐⭐
 
 **简介**: 清华大学NetMan实验室的AIOps数据集合集
 
 **包含数据集**:
-- AIOps-Challenge-2020-Data
-- LatentScope
-- OpsEval-Datasets
+- AIOps-Challenge-2020-Data（挑战赛数据）
+- LatentScope（有限可观测性RCA）
+- OpsEval-Datasets（多模态故障数据）
+- Donut-Data（KPI异常检测）
+- Bagel-Data（时间序列异常）
 
 **资源链接**:
-- GitHub: https://github.com/NetManAIOps
+- GitHub组织: https://github.com/NetManAIOps
 - 论文: arXiv:2208.03938
 
 ---
 
-### 3.3 AIOpsArena & MicroServo ⭐⭐⭐⭐
+### 3.4 开源AIOps工具（可用于开发测试）
 
-**简介**: 场景导向的AIOps评估环境
-
-**特性**:
-- 实时微服务数据集生成
-- 动态故障编排
-- 算法热插拔
-- 排行榜比较
-
-**资源链接**:
-- AIOpsArena GitHub: https://github.com/AIOpsArena/aiopsarena
-- MicroServo论文: https://arxiv.org/pdf/2407.14532
+| 工具 | 用途 | 语言 | GitHub |
+|------|------|------|--------|
+| **Loglizer** | 日志分析与异常检测 | Python | https://github.com/logpai/loglizer |
+| **Log-Anomaly-Detector** | 无监督日志异常检测 | Python | https://github.com/AICoE/log-anomaly-detector |
+| **WhyLogs** | 日志/指标自动画像 | Python | https://github.com/whylabs/whylogs |
+| **Drain3** | 日志解析 | Python | https://github.com/logpai/Drain3 |
+| **DeepLog** | 深度学习日志异常检测 | Python | https://github.com/wuyifan18/DeepLog |
 
 ---
 
-### 3.4 DeathStarBench ⭐⭐⭐⭐
+### 3.5 快速开始指南
 
-**简介**: 微服务研究标准基准测试套件
+#### 📝 开发测试流程建议
 
-**包含应用**:
-- SocialNetwork（28个微服务）
-- HotelReservation（酒店预订系统）
+**第一步：选择数据集**
+```
+初学者 → HDFS/BGL日志数据集（简单，标注清晰）
+进阶者 → RCAEval多模态数据集（完整，故障类型丰富）
+高级者 → 自建环境 + Chaos Mesh故障注入
+```
 
-**资源链接**:
-- GitHub: https://github.com/delimitrou/DeathStarBench
+**第二步：搭建测试环境**
+```
+本地开发 → Docker + 单服务测试
+集成测试 → Minikube + 微服务应用
+生产级测试 → Kubernetes集群 + AIOpsArena
+```
+
+**第三步：选择评测指标**
+```
+检测任务 → 检测时间(TTD)、准确率、召回率
+定位任务 → Acc@K、MRR、定位时间(TTL)
+RCA任务 → 根因准确率、步骤数、Token消耗
+```
 
 ---
 
